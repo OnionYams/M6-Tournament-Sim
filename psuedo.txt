@@ -1,0 +1,8 @@
+
+on startup ask for number of participants, save as global int
+boolean to track if run sim
+function to display menu and handle inputs
+run function while bool true
+switch menu based on input, go back after resolved
+dictionary to hold participants, for view just go to nums +- 5 and check if dict has those keys
+boolean to track if csv saved, ie if sign up or cancel make this false bc there's new info
