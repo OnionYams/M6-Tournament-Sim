@@ -20,11 +20,12 @@ while temp <= 0:
         print("Must be an integer greater than 0\n")
 
 maxPeople = temp
+people = [None]*maxPeople
 print(F"\nThere are {maxPeople} participant slots ready for sign-ups.\n")
 
 def doSim():
-    global unSavedChanges, maxPeople, runSim
-    people = [None]*maxPeople
+    global unSavedChanges, maxPeople, runSim, people
+    
     print("Participant Menu\n================\n1. Sign Up\n2. Cancel Sign Up\n3. View Participants\n4. Save Changes\n5. Exit")
     # not using switch statement bc want else output
     menuItem = -1
@@ -37,14 +38,71 @@ def doSim():
             print("Must be an integer")
     if menuItem == 1:
         name = str(input("Participant Sign Up\n====================\nParticipant Name: "))
-        spot = int
+        spot = -1
+        while spot <= 0 or spot > maxPeople:
+            try: 
+                spot = int(input(F"Desired starting slot #[1-{maxPeople}]: "))
+                if spot <= 0 or spot > maxPeople:
+                    print("Not a valid number")
+            except: 
+                print("Must be an integer")
+        # repeated while to get new values if bad entry
+        while people[spot-1] != None:
+            print(F"Error:\nSlot #{spot} is filled.  Please try again.\n")
+            # get new val, otherwise next loop always eval true
+            try: 
+                    spot = int(input(F"Desired starting slot #[1-{maxPeople}]: "))
+                    if spot <= 0 or spot > maxPeople:
+                        print("Not a valid number")
+            except: 
+                    print("Must be an integer")
+
+            while spot <= 0 or spot >= maxPeople:
+                try: 
+                    spot = int(input(F"Desired starting slot #[1-{maxPeople}]: "))
+                    if spot <= 0 or spot > maxPeople:
+                        print("Not a valid number")
+                except: 
+                    print("Must be an integer")
+        people[spot-1] = name
+        # print(name,spot,people)
+        print(F"Success:\n{name} is signed up in starting slot #{spot}.")    
+    # no exit condition if fail but not in specs
     elif menuItem == 2:
-        print
+        print("Participant Cancellation\n====================")
+        spot = -1
+        runCancel = True
+        while(runCancel):
+            # get new spot for each loop
+            try: 
+                    spot = int(input(F"Starting slot #[1-{maxPeople}]: "))
+                    if spot <= 0 or spot > maxPeople:
+                        print("Not a valid number")
+            except: 
+                    print("Must be an integer")
+            while spot <= 0 or spot > maxPeople:
+                try: 
+                    spot = int(input(F"Starting slot #[1-{maxPeople}]: "))
+                    if spot <= 0 or spot > maxPeople:
+                        print("Not a valid number")
+                except: 
+                    print("Must be an integer")
+            name = input("Participant Name: ")
+            if people[spot-1] != name:
+                print(F"Error:\n{name} is not in that starting slot.")
+            else:
+                people[spot-1] = None
+                print(F"Success:\n{name} has been cancelled from starting slot #{spot}.")
+                runCancel = False
     elif menuItem == 3:
-        print
+        print(people)
     elif menuItem == 4:
         if input("Save Changes\n============\nSave your changes to CSV? [y/n] ").lower() == "y":
-            f.write(people)
+            for i in range(len(people)):
+                if people[i] == None:
+                    people[i] = "empty"
+            f.write(",".join(people))
+            print("Written")
     elif menuItem == 5:
         if input("Exit\n=====\nAny unsaved changes will be lost.\nAre you sure you want to exit? [y/n]) ").lower() == "y":
             print("\nGoodbye!")
